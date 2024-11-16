@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="*" />
+    <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.4.0-preview2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReflectionIT.HighPerformance\ReflectionIT.HighPerformance.csproj" />
+  </ItemGroup>
+
+</Project>
