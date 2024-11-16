@@ -6,8 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReflectionIT.HighPerformanc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{171B6E58-AABD-4952-B56F-EC4482971250}"
 	ProjectSection(SolutionItems) = preProject
-		..\.editorconfig = ..\.editorconfig
+		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReflectionIT.HighPerformance.Benchmarks", "ReflectionIT.HighPerformance.Benchmarks\ReflectionIT.HighPerformance.Benchmarks.csproj", "{42F00D4F-12F5-4905-9D6F-2472BEB28F15}"

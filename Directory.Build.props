@@ -5,7 +5,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Company>Reflection IT</Company>
+        <Copyright>(c) Reflection IT. All rights reserved.</Copyright>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <Product>Reflection IT High Performance Library</Product>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
 </Project>
