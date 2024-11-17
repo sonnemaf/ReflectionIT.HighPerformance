@@ -4,16 +4,23 @@ A collection of helpers for working in high-performance scenarios.
 It includes APIs such as ``Uf8StringPool`` and ``StringPool`` types. 
 It utilizes the new performance improvements of .NET 9 like AlternateLookup.
 
-# NuGet packages
+## NuGet packages
 
 | Package | Version |
 | ------ | ------ |
 | ReflectionIT.HighPerformance | [![NuGet](https://img.shields.io/nuget/v/ReflectionIT.HighPerformance)](https://www.nuget.org/packages/ReflectionIT.HighPerformance/) |    
 
+## Get Started
 
-# Usage examples
+ReflectionIT.HighPerformance can be installed using the Nuget package manager or the `dotnet` CLI.
 
-## Utf8StringPool
+```
+dotnet add package ReflectionIT.HighPerformance
+```
+
+## Usage examples
+
+### Utf8StringPool
 
 ```cs
 using ReflectionIT.HighPerformance.Buffers;
@@ -31,7 +38,7 @@ foreach (Range range in text.Split((byte)',')) {
 Console.WriteLine(Utf8StringPool.Shared.Count); // 3
 ```
 
-## StringPool
+### StringPool
 
 Case sensitive StringPool
 
@@ -85,11 +92,11 @@ for (int i = 0; i < 100; i++) {
 Console.WriteLine(StringPool.Shared.Count); // 10
 ```
 
-# Benchmarks
+## Benchmarks
 
 This solution also contains [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet) benchmarks for the ``Utf8StringPool`` and the ``StringPool`` classes.
 
-## Utf8StringPool
+### Utf8StringPool
 
 Utf8Encode using ``Encoding.UTF8.GetString()`` is the fastest but also allocates the most memory. 
 The ``StringPool`` is fater than the ``Utf8StringPool`` but also uses more memory.
@@ -114,7 +121,7 @@ Job=DefaultJob
 | Utf8Encode     | 13.16 μs | 0.186 μs |  0.81 | 3.5248 |  28.91 KB |       22.56 |
 
 
-## StringPool
+### StringPool
 
 Creating new strings is the fastest but also allocates the most memory. 
 The ``StringPool`` is fater than the ``CommunityToolkit.HighPerformance.Buffers.StringPool``.
@@ -138,3 +145,18 @@ Job=DefaultJob
 | StringPool                 |  9.644 μs | 0.1712 μs |  1.00 | 0.0916 |     872 B |        1.00 |
 | CommunityToolkitStringPool | 33.457 μs | 0.5034 μs |  3.47 | 0.1831 |    1920 B |        2.20 |
 | NewString                  |  6.316 μs | 0.0828 μs |  0.66 | 3.5324 |   29600 B |       33.94 |
+
+## Contributing
+
+If you find an issue or have suggestions file an issue on the this repository.
+
+### Code of Conduct
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## License
+
+MIT

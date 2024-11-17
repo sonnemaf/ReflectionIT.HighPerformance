@@ -1,21 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Authors>Reflection IT</Authors>
-    <Description>A collection of helpers for working in high-performance scenarios. It includes APIs such as string pool types. It utilizes the new performance improvements of .NET 9 like AlternateLookup.</Description>
-    <PackageProjectUrl>https://github.com/sonnemaf/ReflectionIT.HighPerformance</PackageProjectUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/sonnemaf/ReflectionIT.HighPerformance</RepositoryUrl>
-    <PackageTags>dotnet;.NET;StringPool;Utf8StringPool;AlternateLookup</PackageTags>
-    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-  </PropertyGroup>
+    <PropertyGroup>
+        <Authors>Reflection IT</Authors>
+        <Description>A collection of helpers for working in high-performance scenarios. It includes APIs such as string pool types. It utilizes the new performance improvements of .NET 9 like AlternateLookup.</Description>
+        <PackageProjectUrl>https://github.com/sonnemaf/ReflectionIT.HighPerformance</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/sonnemaf/ReflectionIT.HighPerformance</RepositoryUrl>
+        <PackageTags>dotnet;.NET;StringPool;Utf8StringPool;AlternateLookup</PackageTags>
+        <PackageReleaseNotes>Null checking added and improved README file</PackageReleaseNotes>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+      <None Update="README.md">
+          <Pack>True</Pack>
+          <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 
 </Project>
