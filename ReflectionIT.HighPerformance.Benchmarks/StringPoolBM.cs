@@ -12,7 +12,7 @@ public class StringPoolBM {
 
     [GlobalSetup]
     public void GlobalSetup() {
-        for (var i = 0; i < 1000; i++) {
+        for (var i = 0; i < 100; i++) {
             Add("The");
             Add("quick");
             Add("brown");
@@ -28,7 +28,7 @@ public class StringPoolBM {
         }
     }
 
-    [Benchmark]
+    [Benchmark(Baseline = true)]
     public void StringPool() {
         var pool = new StringPool(20);
         foreach (var item in _words) {
@@ -44,7 +44,7 @@ public class StringPoolBM {
         }
     }
 
-    [Benchmark(Baseline = true)]
+    [Benchmark]
     public void NewString() {
         foreach (var item in _words) {
             _ = new string(item);

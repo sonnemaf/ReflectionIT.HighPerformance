@@ -23,7 +23,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// Initializes a new instance of the <see cref="StringPool"/> class.
     /// </summary>
     public StringPool() {
-        _pool = new HashSet<string>();
+        _pool = [];
         _alternateLookupPool = _pool.GetAlternateLookup<ReadOnlySpan<char>>();
     }
 
@@ -41,6 +41,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// </summary>
     /// <param name="equalityComparer">The equality comparer to use for comparing strings.</param>
     public StringPool(IEqualityComparer<string> equalityComparer) {
+        ArgumentNullException.ThrowIfNull(equalityComparer);
         _pool = new HashSet<string>(equalityComparer);
         _alternateLookupPool = _pool.GetAlternateLookup<ReadOnlySpan<char>>();
     }
@@ -51,6 +52,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// <param name="equalityComparer">The equality comparer to use for comparing strings.</param>
     /// <param name="capacity">The initial size of the StringPool.</param>
     public StringPool(int capacity, IEqualityComparer<string> equalityComparer) {
+        ArgumentNullException.ThrowIfNull(equalityComparer);
         _pool = new HashSet<string>(capacity, equalityComparer);
         _alternateLookupPool = _pool.GetAlternateLookup<ReadOnlySpan<char>>();
     }
@@ -62,7 +64,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// <returns>The existing or newly added string.</returns>
     public string GetOrAdd(string key) {
         return _pool.TryGetValue(key, out var value) 
-               ? value : Add(key);
+               ? value : AddAndReturn(key);
     }
 
     /// <summary>
@@ -72,7 +74,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// <returns>The existing or newly added string.</returns>
     public string GetOrAdd(ReadOnlySpan<char> key) {
         return _alternateLookupPool.TryGetValue(key, out var value) 
-               ? value : Add(key.ToString());
+               ? value : AddAndReturn(key.ToString());
     }
 
     /// <summary>
@@ -85,7 +87,7 @@ public sealed class StringPool : IEnumerable<string> {
         Utf8.ToUtf16(bytes, chars, out _, out var length);
         chars = chars[0..length]; // remove \0
         return _alternateLookupPool.TryGetValue(chars, out var value) 
-               ? value : Add(new string(chars));
+               ? value : AddAndReturn(new string(chars));
     }
 
     /// <summary>
@@ -107,7 +109,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// </summary>
     /// <param name="text">The string to add.</param>
     /// <returns>The added string.</returns>
-    private string Add(string text) {
+    private string AddAndReturn(string text) {
         _pool.Add(text);
         return text;
     }

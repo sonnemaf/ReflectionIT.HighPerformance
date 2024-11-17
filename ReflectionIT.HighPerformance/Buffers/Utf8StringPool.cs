@@ -29,8 +29,9 @@ public sealed class Utf8StringPool : IEnumerable<string> {
     /// <param name="key">The byte array representing the UTF-8 encoded string to add.</param>
     /// <returns>The existing or newly added string.</returns>
     public string GetOrAdd(byte[] key) {
+        ArgumentNullException.ThrowIfNull(key);
         return _pool.TryGetValue(key, out var value)
-               ? value : this.Add(key, value: Encoding.UTF8.GetString(key));
+               ? value : this.AddAndReturn(key, value: Encoding.UTF8.GetString(key));
     }
 
     /// <summary>
@@ -40,16 +41,16 @@ public sealed class Utf8StringPool : IEnumerable<string> {
     /// <returns>The existing or newly added string.</returns>
     public string GetOrAdd(ReadOnlySpan<byte> key) {
         return _alternateLookupPool.TryGetValue(key, out var value)
-               ? value : Add(key.ToArray(), Encoding.UTF8.GetString(key));
+               ? value : AddAndReturn(key.ToArray(), Encoding.UTF8.GetString(key));
     }
 
     /// <summary>
-    /// Adds a UTF-8 encoded string to the pool.
+    /// Adds a key+string to the pool.
     /// </summary>
-    /// <param name="key">The byte array representing the UTF-8 encoded string to add.</param>
+    /// <param name="key">The key to add</param>
     /// <param name="value">The string to add.</param>
     /// <returns>The added string.</returns>
-    private string Add(byte[] key, string value) {
+    private string AddAndReturn(byte[] key, string value) {
         _pool.Add(key, value);
         return value;
     }

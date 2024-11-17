@@ -1,4 +1,4 @@
-using ReflectionIT.HighPerformance.Buffers;
+﻿using ReflectionIT.HighPerformance.Buffers;
 using System.Text;
 
 namespace ReflectionIT.HighPerformance.Test;
@@ -12,13 +12,13 @@ public class Utf8StringPoolTests {
     public void GetOrAdd_ByteArrayKey_ReturnsSameString() {
         // Arrange
         var pool = new Utf8StringPool();
-        var key = Encoding.UTF8.GetBytes("test");
+        var key = "Test😁👌💕€Ġ"u8;
 
         // Act
         var result = pool.GetOrAdd(key);
 
         // Assert
-        Assert.Equal("test", result);
+        Assert.Equal("Test😁👌💕€Ġ", result);
         Assert.Equal(1, pool.Count);
     }
 
@@ -29,16 +29,16 @@ public class Utf8StringPoolTests {
     public void GetOrAdd_ReadOnlySpanByteKey_ReturnsSameString() {
         // Arrange
         var pool = new Utf8StringPool();
-        var key1 = "test"u8;
-        var key2 = "test"u8;
+        var key1 = "Test😁👌💕"u8;
+        var key2 = "Test😁👌💕"u8;
 
         // Act
         var result1 = pool.GetOrAdd(key1);
         var result2 = pool.GetOrAdd(key2);
 
         // Assert
-        Assert.Equal("test", result1);
-        Assert.Equal("test", result2);
+        Assert.Equal("Test😁👌💕", result1);
+        Assert.Equal("Test😁👌💕", result2);
         Assert.Same(result1, result2);
         Assert.Equal(1, pool.Count);
     }
@@ -116,5 +116,7 @@ public class Utf8StringPoolTests {
         Assert.NotSame(result1, result2);
         Assert.Equal(2, pool.Count);
     }
+
+
 }
 

@@ -13,7 +13,7 @@ public class Utf8StringPoolBM {
 
     [GlobalSetup]
     public void GlobalSetup() {
-        for (var i = 0; i < 1000; i++) {
+        for (var i = 0; i < 100; i++) {
             Add("The"u8);
             Add("quick"u8);
             Add("brown"u8);
@@ -29,7 +29,7 @@ public class Utf8StringPoolBM {
         }
     }
 
-    [Benchmark]
+    [Benchmark(Baseline = true)]
     public void Utf8StringPool() {
         var pool = new Utf8StringPool();
         foreach (var item in _words) {
@@ -45,7 +45,7 @@ public class Utf8StringPoolBM {
         }
     }
 
-    [Benchmark(Baseline = true)]
+    [Benchmark]
     public void Utf8Encode() {
         foreach (var item in _words) {
             _ = Encoding.UTF8.GetString(item);
