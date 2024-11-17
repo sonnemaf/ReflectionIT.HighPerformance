@@ -101,7 +101,7 @@ This solution also contains [BenchmarkDotNet](https://github.com/dotnet/Benchmar
 Utf8Encode using ``Encoding.UTF8.GetString()`` is the fastest but also allocates the most memory. 
 The ``StringPool`` is fater than the ``Utf8StringPool`` but also uses more memory.
 
-[Utf8StringPool.cs](https://github.com/sonnemaf/ReflectionIT.HighPerformance/blob/master/ReflectionIT.HighPerformance.Benchmarks/UtfStringPoolBM.cs)
+[Utf8StringPoolBM.cs](https://github.com/sonnemaf/ReflectionIT.HighPerformance/blob/master/ReflectionIT.HighPerformance.Benchmarks/Utf8StringPoolBM.cs)
 
 ```
 
@@ -127,7 +127,7 @@ Creating new strings is the fastest but also allocates the most memory.
 The ``StringPool`` is fater than the ``CommunityToolkit.HighPerformance.Buffers.StringPool``.
 
 
-[StringPool.cs](https://github.com/sonnemaf/ReflectionIT.HighPerformance/blob/master/ReflectionIT.HighPerformance.Benchmarks/StringPoolBM.cs)
+[StringPoolBM.cs](https://github.com/sonnemaf/ReflectionIT.HighPerformance/blob/master/ReflectionIT.HighPerformance.Benchmarks/StringPoolBM.cs)
 
 ```
 
