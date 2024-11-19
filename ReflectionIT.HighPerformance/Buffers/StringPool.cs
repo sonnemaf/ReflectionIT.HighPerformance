@@ -1,4 +1,5 @@
 ﻿using ReflectionIT.HighPerformance.Helpers;
+using System.Buffers;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -63,7 +64,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// <param name="key">The string to add.</param>
     /// <returns>The existing or newly added string.</returns>
     public string GetOrAdd(string key) {
-        return _pool.TryGetValue(key, out var value) 
+        return _pool.TryGetValue(key, out var value)
                ? value : AddAndReturn(key);
     }
 
@@ -73,7 +74,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// <param name="key">The span of characters representing the string to add.</param>
     /// <returns>The existing or newly added string.</returns>
     public string GetOrAdd(ReadOnlySpan<char> key) {
-        return _alternateLookupPool.TryGetValue(key, out var value) 
+        return _alternateLookupPool.TryGetValue(key, out var value)
                ? value : AddAndReturn(key.ToString());
     }
 
@@ -83,11 +84,23 @@ public sealed class StringPool : IEnumerable<string> {
     /// <param name="bytes">The read-only span of bytes representing the string to add.</param>
     /// <returns>The existing or newly added string.</returns>
     public string GetOrAdd(ReadOnlySpan<byte> bytes) {
-        Span<char> chars = stackalloc char[Encoding.UTF8.GetMaxCharCount(bytes.Length)];
-        Utf8.ToUtf16(bytes, chars, out _, out var length);
-        chars = chars[0..length]; // remove \0
-        return _alternateLookupPool.TryGetValue(chars, out var value) 
-               ? value : AddAndReturn(new string(chars));
+        var length = Encoding.UTF8.GetMaxCharCount(bytes.Length);
+        char[]? charArray = null;
+        try {
+            Span<char> chars = length < 32 ? stackalloc char[length] : (charArray = ArrayPool<char>.Shared.Rent(length));
+            Utf8.ToUtf16(bytes, chars, out _, out length);
+            chars = chars[0..length]; // remove \0
+            if (_alternateLookupPool.TryGetValue(chars, out var value)) {
+                return value;
+            } else {
+                _alternateLookupPool.Add(chars);
+                return _alternateLookupPool.TryGetValue(chars, out var value2) ? value2 : new string(chars);
+            }
+        } finally {
+            if (charArray is not null) {
+                ArrayPool<char>.Shared.Return(charArray);
+            }
+        }
     }
 
     /// <summary>
@@ -118,6 +131,11 @@ public sealed class StringPool : IEnumerable<string> {
     /// Gets the number of strings in the pool.
     /// </summary>
     public int Count => _pool.Count;
+
+    /// <summary>
+    /// Clear the string pool
+    /// </summary>
+    public void Clear() => _pool.Clear();
 
     /// <summary>
     /// Returns an enumerator that iterates through the strings in the pool.

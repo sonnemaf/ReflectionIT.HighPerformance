@@ -37,6 +37,14 @@ public class Utf8StringPoolBM {
         }
     }
 
+    [Benchmark()]
+    public void ConcurrentUtf8StringPool() {
+        var pool = new ConcurrentUtf8StringPool();
+        foreach (var item in _words) {
+            _ = pool.GetOrAdd(item);
+        }
+    }
+
     [Benchmark]
     public void StringPool() {
         var pool = new StringPool();

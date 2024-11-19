@@ -3,7 +3,7 @@ using ReflectionIT.HighPerformance.Buffers;
 
 namespace ReflectionIT.HighPerformance.Benchmarks;
 
-//[ShortRunJob]
+[ShortRunJob]
 [HideColumns("Job", "StdDev", "RatioSD")]
 [MemoryDiagnoser(displayGenColumns: true)]
 public class StringPoolBM {

@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Text;
 
 namespace ReflectionIT.HighPerformance.Buffers;
@@ -6,20 +8,20 @@ namespace ReflectionIT.HighPerformance.Buffers;
 /// <summary>
 /// Represents a pool of UTF-8 encoded strings that can be reused to reduce memory allocations.
 /// </summary>
-public sealed class Utf8StringPool : IEnumerable<string> {
+public sealed class ConcurrentUtf8StringPool : IEnumerable<string> {
 
     /// <summary>
     /// Gets the shared instance of the <see cref="Utf8StringPool"/>.
     /// </summary>
     public static Utf8StringPool Shared { get; } = new();
 
-    private readonly Dictionary<byte[], string> _pool = new Dictionary<byte[], string>(new BytesReadOnlySpanOfBytesEqualityComparer());
-    private readonly Dictionary<byte[], string>.AlternateLookup<ReadOnlySpan<byte>> _alternateLookupPool;
+    private readonly ConcurrentDictionary<byte[], string> _pool = new ConcurrentDictionary<byte[], string>(new BytesReadOnlySpanOfBytesEqualityComparer());
+    private readonly ConcurrentDictionary<byte[], string>.AlternateLookup<ReadOnlySpan<byte>> _alternateLookupPool;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Utf8StringPool"/> class.
     /// </summary>
-    public Utf8StringPool() {
+    public ConcurrentUtf8StringPool() {
         _alternateLookupPool = _pool.GetAlternateLookup<ReadOnlySpan<byte>>();
     }
 
@@ -30,16 +32,7 @@ public sealed class Utf8StringPool : IEnumerable<string> {
     /// <returns>The existing or newly added string.</returns>
     public string GetOrAdd(byte[] key) {
         ArgumentNullException.ThrowIfNull(key);
-
-        if (_pool.TryGetValue(key, out var value)) {
-            return value;
-        } else {
-            value = Encoding.UTF8.GetString(key);
-            if (!_pool.TryAdd(key, value)) {
-                _pool[key] = value;
-            }
-            return value;
-        }
+        return _pool.GetOrAdd(key, static bytes => Encoding.UTF8.GetString(bytes));
     }
 
     /// <summary>
@@ -63,6 +56,11 @@ public sealed class Utf8StringPool : IEnumerable<string> {
     /// Gets the number of strings in the pool.
     /// </summary>
     public int Count => _pool.Count;
+
+    /// <summary>
+    /// Clear the string pool
+    /// </summary>
+    public void Clear() => _pool.Clear();
 
     /// <summary>
     /// Returns an enumerator that iterates through the strings in the pool.
