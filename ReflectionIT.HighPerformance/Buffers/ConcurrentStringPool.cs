@@ -1,6 +1,7 @@
 ﻿using ReflectionIT.HighPerformance.Helpers;
 using System.Buffers;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Unicode;
@@ -8,22 +9,22 @@ using System.Text.Unicode;
 namespace ReflectionIT.HighPerformance.Buffers;
 
 /// <summary>
-/// Represents a pool of strings that can be reused to reduce memory allocations.
+/// Represents a thread safe pool of strings that can be reused to reduce memory allocations.
 /// </summary>
-public sealed class StringPool : IEnumerable<string> {
+public sealed class ConcurrentStringPool : IEnumerable<string> {
 
     /// <summary>
     /// Gets the shared instance of the <see cref="StringPool"/>.
     /// </summary>
     public static StringPool Shared { get; } = new();
 
-    private readonly HashSet<string> _pool;
-    private readonly HashSet<string>.AlternateLookup<ReadOnlySpan<char>> _alternateLookupPool;
+    private readonly ConcurrentDictionary<string, string> _pool;
+    private readonly ConcurrentDictionary<string, string>.AlternateLookup<ReadOnlySpan<char>> _alternateLookupPool;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StringPool"/> class.
     /// </summary>
-    public StringPool() {
+    public ConcurrentStringPool() {
         _pool = [];
         _alternateLookupPool = _pool.GetAlternateLookup<ReadOnlySpan<char>>();
     }
@@ -32,8 +33,8 @@ public sealed class StringPool : IEnumerable<string> {
     /// Initializes a new instance of the <see cref="StringPool"/> class.
     /// </summary>
     /// <param name="capacity">The initial size of the StringPool.</param>
-    public StringPool(int capacity) {
-        _pool = new HashSet<string>(capacity);
+    public ConcurrentStringPool(int capacity) {
+        _pool = new(-1, capacity);
         _alternateLookupPool = _pool.GetAlternateLookup<ReadOnlySpan<char>>();
     }
 
@@ -41,9 +42,9 @@ public sealed class StringPool : IEnumerable<string> {
     /// Initializes a new instance of the <see cref="StringPool"/> class with a specified equality comparer.
     /// </summary>
     /// <param name="equalityComparer">The equality comparer to use for comparing strings.</param>
-    public StringPool(IEqualityComparer<string> equalityComparer) {
+    public ConcurrentStringPool(IEqualityComparer<string> equalityComparer) {
         ArgumentNullException.ThrowIfNull(equalityComparer);
-        _pool = new HashSet<string>(equalityComparer);
+        _pool = new(equalityComparer);
         _alternateLookupPool = _pool.GetAlternateLookup<ReadOnlySpan<char>>();
     }
 
@@ -52,9 +53,9 @@ public sealed class StringPool : IEnumerable<string> {
     /// </summary>
     /// <param name="equalityComparer">The equality comparer to use for comparing strings.</param>
     /// <param name="capacity">The initial size of the StringPool.</param>
-    public StringPool(int capacity, IEqualityComparer<string> equalityComparer) {
+    public ConcurrentStringPool(int capacity, IEqualityComparer<string> equalityComparer) {
         ArgumentNullException.ThrowIfNull(equalityComparer);
-        _pool = new HashSet<string>(capacity, equalityComparer);
+        _pool = new(-1, capacity, equalityComparer);
         _alternateLookupPool = _pool.GetAlternateLookup<ReadOnlySpan<char>>();
     }
 
@@ -89,8 +90,8 @@ public sealed class StringPool : IEnumerable<string> {
             if (_alternateLookupPool.TryGetValue(chars, out var value)) {
                 return value;
             } else {
-                _alternateLookupPool.Add(chars);
-                return _alternateLookupPool.TryGetValue(chars, out var value2) ? value2 : new string(chars);
+                value = new string(chars);
+                return AddAndReturn(value);
             }
         } finally {
             if (charArray is not null) {
@@ -119,7 +120,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// <param name="text">The string to add.</param>
     /// <returns>The added string.</returns>
     private string AddAndReturn(string text) {
-        _pool.Add(text);
+        _pool.TryAdd(text, text);
         return text;
     }
 
@@ -137,7 +138,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// Returns an enumerator that iterates through the strings in the pool.
     /// </summary>
     /// <returns>An enumerator for the strings in the pool.</returns>
-    public IEnumerator<string> GetEnumerator() => _pool.GetEnumerator();
+    public IEnumerator<string> GetEnumerator() => _pool.Values.GetEnumerator();
 
     /// <summary>
     /// Returns an enumerator that iterates through the strings in the pool.

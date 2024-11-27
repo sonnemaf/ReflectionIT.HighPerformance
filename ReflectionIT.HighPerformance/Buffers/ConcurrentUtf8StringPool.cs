@@ -6,7 +6,7 @@ using System.Text;
 namespace ReflectionIT.HighPerformance.Buffers;
 
 /// <summary>
-/// Represents a pool of UTF-8 encoded strings that can be reused to reduce memory allocations.
+/// Represents a thread safe pool of UTF-8 encoded strings that can be reused to reduce memory allocations.
 /// </summary>
 public sealed class ConcurrentUtf8StringPool : IEnumerable<string> {
 
@@ -66,15 +66,11 @@ public sealed class ConcurrentUtf8StringPool : IEnumerable<string> {
     /// Returns an enumerator that iterates through the strings in the pool.
     /// </summary>
     /// <returns>An enumerator for the strings in the pool.</returns>
-    public IEnumerator<string> GetEnumerator() {
-        return _pool.Values.GetEnumerator();
-    }
+    public IEnumerator<string> GetEnumerator() => _pool.Values.GetEnumerator();
 
     /// <summary>
     /// Returns an enumerator that iterates through the strings in the pool.
     /// </summary>
     /// <returns>An enumerator for the strings in the pool.</returns>
-    IEnumerator IEnumerable.GetEnumerator() {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

@@ -6,8 +6,8 @@
         <PackageProjectUrl>https://github.com/sonnemaf/ReflectionIT.HighPerformance</PackageProjectUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/sonnemaf/ReflectionIT.HighPerformance</RepositoryUrl>
-        <PackageTags>dotnet;.NET;StringPool;Utf8StringPool;AlternateLookup</PackageTags>
-        <PackageReleaseNotes>Null checking added and improved README file</PackageReleaseNotes>
+        <PackageTags>dotnet;.NET;StringPool;Utf8StringPool;ConcurrentStringPool;ConcurrentUtf8StringPool;AlternateLookup</PackageTags>
+        <PackageReleaseNotes>Concurrent pools added</PackageReleaseNotes>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <EnablePackageValidation>true</EnablePackageValidation>
         <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion>

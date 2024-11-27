@@ -5,6 +5,8 @@ namespace ReflectionIT.HighPerformance.Test;
 
 public class StringPoolTests {
 
+    private static StringPool CreatePool() => new StringPool(20);
+
     /// <summary>
     /// Tests that GetOrAdd with a string key returns the same string.
     /// </summary>
@@ -21,8 +23,6 @@ public class StringPoolTests {
         Assert.Equal(key, result);
         Assert.Equal(1, pool.Count);
     }
-
-    private static StringPool CreatePool() => new StringPool(20);
 
     /// <summary>
     /// Tests that GetOrAdd with a ReadOnlySpan<char> key returns the same string.

@@ -1,7 +1,7 @@
 ﻿# ReflectionIT.HighPerformance
 
 A collection of helpers for working in high-performance scenarios. 
-It includes APIs such as ``Uf8StringPool`` and ``StringPool`` types. 
+It includes APIs such as ``Uf8StringPool``, ``StringPool``, ``ConcurrentUf8StringPool`` and ``ConcurrentStringPool`` types. 
 It utilizes the new performance improvements of .NET 9 like AlternateLookup.
 
 # Usage examples

@@ -37,6 +37,14 @@ public class StringPoolBM {
     }
 
     [Benchmark]
+    public void ConcurrentStringPool() {
+        var pool = new ConcurrentStringPool(20);
+        foreach (var item in _words) {
+            _ = pool.GetOrAdd(item);
+        }
+    }
+
+    [Benchmark]
     public void CommunityToolkitStringPool() {
         var pool = new CommunityToolkit.HighPerformance.Buffers.StringPool(20);
         foreach (var item in _words) {

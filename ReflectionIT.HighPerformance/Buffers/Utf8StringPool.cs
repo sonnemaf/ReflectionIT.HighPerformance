@@ -65,18 +65,19 @@ public sealed class Utf8StringPool : IEnumerable<string> {
     public int Count => _pool.Count;
 
     /// <summary>
-    /// Returns an enumerator that iterates through the strings in the pool.
+    /// Clear the string pool
     /// </summary>
-    /// <returns>An enumerator for the strings in the pool.</returns>
-    public IEnumerator<string> GetEnumerator() {
-        return _pool.Values.GetEnumerator();
-    }
+    public void Clear() => _pool.Clear();
 
     /// <summary>
     /// Returns an enumerator that iterates through the strings in the pool.
     /// </summary>
     /// <returns>An enumerator for the strings in the pool.</returns>
-    IEnumerator IEnumerable.GetEnumerator() {
-        return GetEnumerator();
-    }
+    public IEnumerator<string> GetEnumerator() => _pool.Values.GetEnumerator();
+
+    /// <summary>
+    /// Returns an enumerator that iterates through the strings in the pool.
+    /// </summary>
+    /// <returns>An enumerator for the strings in the pool.</returns>
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

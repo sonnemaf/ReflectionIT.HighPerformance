@@ -3,8 +3,9 @@ using System.Text;
 
 namespace ReflectionIT.HighPerformance.Test;
 
-public class StringPoolIgnoreCaseTests {
-    private static StringPool CreatePool() => new StringPool(20, StringComparer.OrdinalIgnoreCase);
+public class ConcurrentStringPoolTests {
+
+    private static ConcurrentStringPool CreateConcurrentPool() => new ConcurrentStringPool(20);
 
     /// <summary>
     /// Tests that GetOrAdd with a string key returns the same string.
@@ -12,20 +13,16 @@ public class StringPoolIgnoreCaseTests {
     [Fact]
     public void GetOrAdd_StringKey_ReturnsSameString() {
         // Arrange
-        var pool = CreatePool();
+        var pool = CreateConcurrentPool();
         var key = "test";
 
         // Act
-        var result1 = pool.GetOrAdd(key);
-        var result2 = pool.GetOrAdd(key.ToUpper());
+        var result = pool.GetOrAdd(key);
 
         // Assert
-        Assert.Equal(key, result1);
-        Assert.Equal(key, result2);
-        Assert.Same(result1, result2);
+        Assert.Equal(key, result);
         Assert.Equal(1, pool.Count);
     }
-
 
     /// <summary>
     /// Tests that GetOrAdd with a ReadOnlySpan<char> key returns the same string.
@@ -33,18 +30,14 @@ public class StringPoolIgnoreCaseTests {
     [Fact]
     public void GetOrAdd_ReadOnlySpanCharKey_ReturnsSameString() {
         // Arrange
-        var pool = CreatePool();
-        var key1 = "test".AsSpan();
-        var key2 = "TEST".AsSpan();
+        var pool = CreateConcurrentPool();
+        var key = "test".AsSpan();
 
         // Act
-        var result1 = pool.GetOrAdd(key1);
-        var result2 = pool.GetOrAdd(key2);
+        var result = pool.GetOrAdd(key);
 
         // Assert
-        Assert.Equal("test", result1);
-        Assert.Equal("test", result2);
-        Assert.Same(result1, result2);
+        Assert.Equal("test", result);
         Assert.Equal(1, pool.Count);
     }
 
@@ -54,18 +47,14 @@ public class StringPoolIgnoreCaseTests {
     [Fact]
     public void GetOrAdd_ByteArrayKey_ReturnsSameString() {
         // Arrange
-        var pool = CreatePool();
-        var key1 = Encoding.UTF8.GetBytes("test");
-        var key2 = Encoding.UTF8.GetBytes("TEST");
+        var pool = CreateConcurrentPool();
+        var key = Encoding.UTF8.GetBytes("test");
 
         // Act
-        var result1 = pool.GetOrAdd(key1);
-        var result2 = pool.GetOrAdd(key2);
+        var result = pool.GetOrAdd(key);
 
         // Assert
-        Assert.Equal("test", result1);
-        Assert.Equal("test", result2);
-        Assert.Same(result1, result2);
+        Assert.Equal("test", result);
         Assert.Equal(1, pool.Count);
     }
 
@@ -75,18 +64,14 @@ public class StringPoolIgnoreCaseTests {
     [Fact]
     public void GetOrAdd_ReadOnlySpanByteKey_ReturnsSameString() {
         // Arrange
-        var pool = CreatePool();
-        var key1 = "test"u8;
-        var key2 = "TEST"u8;
+        var pool = CreateConcurrentPool();
+        var key = "test"u8;
 
         // Act
-        var result1 = pool.GetOrAdd(key1);
-        var result2 = pool.GetOrAdd(key2);
+        var result = pool.GetOrAdd(key);
 
         // Assert
-        Assert.Equal("test", result1);
-        Assert.Equal("test", result2);
-        Assert.Same(result1, result2);
+        Assert.Equal("test", result);
         Assert.Equal(1, pool.Count);
     }
 
@@ -96,17 +81,14 @@ public class StringPoolIgnoreCaseTests {
     [Fact]
     public void GetOrAdd_DefaultInterpolatedStringHandler_ReturnsSameString() {
         // Arrange
-        var pool = CreatePool();
+        var pool = CreateConcurrentPool();
         var number = 12;
         // Act
 
-        var result1 = pool.GetOrAdd($"Hello World {number}");
-        var result2 = pool.GetOrAdd($"HELLO World {number}");
+        var result = pool.GetOrAdd($"Hello World {number}");
 
         // Assert
-        Assert.Equal("Hello World 12", result1);
-        Assert.Equal("Hello World 12", result2);
-        Assert.Same(result1, result2);
+        Assert.Equal("Hello World 12", result);
         Assert.Equal(1, pool.Count);
     }
 
@@ -116,7 +98,7 @@ public class StringPoolIgnoreCaseTests {
     [Fact]
     public void GetOrAdd_SameStringTwice_ReturnsSameInstance() {
         // Arrange
-        var pool = CreatePool();
+        var pool = CreateConcurrentPool();
         var key = "test";
 
         // Act
@@ -134,7 +116,7 @@ public class StringPoolIgnoreCaseTests {
     [Fact]
     public void GetOrAdd_DifferentStrings_ReturnsDifferentInstances() {
         // Arrange
-        var pool = CreatePool();
+        var pool = CreateConcurrentPool();
         var key1 = "test1";
         var key2 = "test2";
 
@@ -145,6 +127,28 @@ public class StringPoolIgnoreCaseTests {
         // Assert
         Assert.NotSame(result1, result2);
         Assert.Equal(2, pool.Count);
+    }
+
+    /// <summary>
+    /// Tests if it is really Concurrent, should not throw an exception
+    /// </summary>
+    [Fact]
+    public void Concurrent_GetOrAdd_DifferentReadOnlySpanByteKeys_ReturnsDifferentInstances() {
+        // Arrange
+        var pool = CreateConcurrentPool();
+        //var pool = new StringPool();
+
+        Parallel.For(0, 2000, i => {
+            var key1 = Encoding.UTF8.GetBytes($"test{i}").AsSpan();
+            var key2 = Encoding.UTF8.GetBytes($"test{i + 1}").AsSpan();
+
+            // Act
+            var result1 = pool.GetOrAdd(key1);
+            var result2 = pool.GetOrAdd(key2);
+
+            // Assert
+            Assert.NotSame(result1, result2);
+        });
     }
 }
 

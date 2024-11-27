@@ -1,7 +1,7 @@
 ﻿# ReflectionIT.HighPerformance
 
 A collection of helpers for working in high-performance scenarios. 
-It includes APIs such as ``Uf8StringPool`` and ``StringPool`` types. 
+It includes APIs such as ``Uf8StringPool``, ``StringPool``, ``ConcurrentUf8StringPool`` and ``ConcurrentStringPool`` types. 
 It utilizes the new performance improvements of .NET 9 like AlternateLookup.
 
 ## NuGet packages
@@ -104,22 +104,20 @@ The ``StringPool`` is fater than the ``Utf8StringPool`` but also uses more memor
 [Utf8StringPoolBM.cs](https://github.com/sonnemaf/ReflectionIT.HighPerformance/blob/master/ReflectionIT.HighPerformance.Benchmarks/Utf8StringPoolBM.cs)
 
 ```
-
-BenchmarkDotNet v0.14.0, Windows 11 (10.0.22631.4460/23H2/2023Update/SunValley3)
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.22631.4541/23H2/2023Update/SunValley3)
 Intel Core i7-10875H CPU 2.30GHz, 1 CPU, 16 logical and 8 physical cores
 .NET SDK 9.0.100
   [Host]     : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
   DefaultJob : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
 
 Job=DefaultJob  
-
 ```
-| Method         | Mean     | Error    | Ratio | Gen0   | Allocated | Alloc Ratio |
-|--------------- |---------:|---------:|------:|-------:|----------:|------------:|
-| Utf8StringPool | 16.27 μs | 0.055 μs |  1.00 | 0.1526 |   1.28 KB |        1.00 |
-| StringPool     | 20.04 μs | 0.240 μs |  1.23 | 0.1221 |   1.06 KB |        0.83 |
-| Utf8Encode     | 13.16 μs | 0.186 μs |  0.81 | 3.5248 |  28.91 KB |       22.56 |
-
+| Method                   | Mean     | Error    | Ratio | Gen0   | Allocated | Alloc Ratio |
+|------------------------- |---------:|---------:|------:|-------:|----------:|------------:|
+| Utf8StringPool           | 16.32 μs | 0.313 μs |  1.00 | 0.1526 |   1.28 KB |        1.00 |
+| ConcurrentUtf8StringPool | 15.87 μs | 0.308 μs |  0.97 | 0.1831 |   1.72 KB |        1.34 |
+| StringPool               | 20.40 μs | 0.022 μs |  1.25 | 0.1221 |   1.06 KB |        0.83 |
+| Utf8Encode               | 13.07 μs | 0.240 μs |  0.80 | 3.5248 |  28.91 KB |       22.56 |
 
 ### StringPool
 
@@ -130,21 +128,21 @@ The ``StringPool`` is fater than the ``CommunityToolkit.HighPerformance.Buffers.
 [StringPoolBM.cs](https://github.com/sonnemaf/ReflectionIT.HighPerformance/blob/master/ReflectionIT.HighPerformance.Benchmarks/StringPoolBM.cs)
 
 ```
-
-BenchmarkDotNet v0.14.0, Windows 11 (10.0.22631.4460/23H2/2023Update/SunValley3)
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.22631.4541/23H2/2023Update/SunValley3)
 Intel Core i7-10875H CPU 2.30GHz, 1 CPU, 16 logical and 8 physical cores
 .NET SDK 9.0.100
-  [Host]     : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
-  DefaultJob : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
+  [Host]   : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
+  ShortRun : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX2
 
-Job=DefaultJob  
-
+Job=ShortRun  IterationCount=3  LaunchCount=1  
+WarmupCount=3  
 ```
 | Method                     | Mean      | Error     | Ratio | Gen0   | Allocated | Alloc Ratio |
 |--------------------------- |----------:|----------:|------:|-------:|----------:|------------:|
-| StringPool                 |  9.644 μs | 0.1712 μs |  1.00 | 0.0916 |     872 B |        1.00 |
-| CommunityToolkitStringPool | 33.457 μs | 0.5034 μs |  3.47 | 0.1831 |    1920 B |        2.20 |
-| NewString                  |  6.316 μs | 0.0828 μs |  0.66 | 3.5324 |   29600 B |       33.94 |
+| StringPool                 |  9.917 μs | 0.1990 μs |  1.00 | 0.0916 |     872 B |        1.00 |
+| ConcurrentStringPool       | 10.643 μs | 0.6412 μs |  1.07 | 0.2747 |    2408 B |        2.76 |
+| CommunityToolkitStringPool | 33.811 μs | 1.3866 μs |  3.41 | 0.1831 |    1920 B |        2.20 |
+| NewString                  |  6.317 μs | 1.6826 μs |  0.64 | 3.5324 |   29600 B |       33.94 |
 
 ## Contributing
 
