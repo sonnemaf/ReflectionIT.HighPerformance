@@ -100,8 +100,10 @@ public class StringPoolIgnoreCaseTests {
         var number = 12;
         // Act
 
+#pragma warning disable CS0618 // Type or member is obsolete
         var result1 = pool.GetOrAdd($"Hello World {number}");
         var result2 = pool.GetOrAdd($"HELLO World {number}");
+#pragma warning restore CS0618 // Type or member is obsolete
 
         // Assert
         Assert.Equal("Hello World 12", result1);

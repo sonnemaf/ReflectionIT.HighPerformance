@@ -104,6 +104,7 @@ public sealed class StringPool : IEnumerable<string> {
     /// </summary>
     /// <param name="interpolatedStringHandler">The interpolated string handler representing the string to add.</param>
     /// <returns>The existing or newly added string.</returns>
+    [Obsolete("This GetOrAdd method has been marked as obsolete. This is due to its use of the UnsafeAccessor attribute to access internal members of the DefaultInterpolatedStringHandler.\r\n\r\nUsing the UnsafeAccessor attribute to access internal members can lead to potential security risks and unintended side effects. Therefore, it is recommended to avoid using this method in production code. Consider alternative approaches that do not rely on unsafe access.\r\n\r\nPlease update your code accordingly to ensure it adheres to best practices and maintains the integrity of our application.")]
     public string GetOrAdd(DefaultInterpolatedStringHandler interpolatedStringHandler) {
         try {
             var span = interpolatedStringHandler.GetText();
